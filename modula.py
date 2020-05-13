@@ -75,7 +75,7 @@ class Tokenizer(object):
                 return subtype
         return None #si retorna None entonces elemento no existe,pero si lo es, devuelve una tupla con el type,subtype
 
-
+    
     def hasNextToken(self):
         if len(self.cadena)>self.currentIndex:
             while self.cadena[self.currentIndex]==" ":

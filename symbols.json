@@ -12,10 +12,11 @@
 
     "PR":{
          "PR_TYPE":["int","char","string","short","bool","void","float","double","signed",
-                    "unsigned","union","enum","false","true"],
+                    "unsigned","union","enum","false","true","ifstream"],
          "PR_INST":["return","break","case","continue","do","while","if",
                     "else","for","goto","typedef","switch","default","include"
           ],
-         "PR_MACRO":["define","DEFINE","__LINE__","__FILE__"]
-    }
+         "PR_MACRO":["#","define","DEFINE","__LINE__","__FILE__"]
+    },
+    "CONST":["false","true"]
 }
