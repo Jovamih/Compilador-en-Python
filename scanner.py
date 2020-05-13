@@ -7,7 +7,7 @@ def read_file(path=str()):
     with open(path,mode="r") as f:
         data=f.read()
     return data
-    
+
 def read_table(path=str()):
     with open(path,mode="r") as f:
         table=json.load(f)
@@ -16,7 +16,7 @@ def read_table(path=str()):
 if __name__=="__main__":
 
     if len(sys.argv)<2:
-        print("Missing parameters")
+        print("Ingrese un archivo C como parametro para el analizador Lexico")
         exit(0)
     try:
         table_symbols=read_table("symbols.json")

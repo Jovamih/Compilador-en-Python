@@ -7,15 +7,15 @@
           "OP_LOGC":["&&","!","||"],
           "OP_BITS":["^","~","|","&","<<",">>"],
           "OP_DELM":[";",","],
-          "OP_":[".","?",":"]
+          "OP":[".","?",":"]
 },
 
     "PR":{
-         "PR":["main","int","char","string","define","DEFINE","float",
-          "double","return","bool","if","else","for","while",
-          "cin","cout","iostream","include","using","namespace","std",
-          "fprintf","endl","cstdio","auto","break","case",
-          "continue","default","delete","do","enum","friend","goto",
-          "register","sizeof"]
+         "PR_TYPE":["int","char","string","short","bool","void","float","double","signed",
+                    "unsigned","union","enum","false","true"],
+         "PR_INST":["return","break","case","continue","do","while","if",
+                    "else","for","goto","typedef","switch","default","include"
+          ],
+         "PR_MACRO":["define","DEFINE","__LINE__","__FILE__"]
     }
 }
