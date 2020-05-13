@@ -6,6 +6,8 @@
     "PR":["main","int","char","string","define","float",
           "double","return","bool","if","else","for","while",
           "cin","cout","iostream","include","using","namespace","std",
-          "fprintf","endl","cstdio"
+          "fprintf","endl","cstdio","auto","break","case",
+          "continue","default","delete","do","enum","friend","goto",
+          "register","sizeof"
         ]
 }
