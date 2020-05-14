@@ -80,20 +80,20 @@ class Tokenizer(object):
         #agregaremos un control de excepciones para evitar el final de la cadena y cause un error grave
         try:
         #primero ignoramos los espacios
-            while self.cadena[self.currentIndex]==" ": 
-                    self.currentIndex+=1
-            #ignoramos los comentarios de 2 lineas '//'
-            if self.cadena[self.currentIndex]=="/" and self.cadena[self.currentIndex+1]=="/": 
-                self.currentIndex+=2
-                while self.cadena[self.currentIndex] !="\n":
-                    self.currentIndex+=1
+            while self.cadena[self.currentIndex]==" " or self.cadena[self.currentIndex]=="\n": 
                 self.currentIndex+=1
-            #ignoramos los comentarios de extension /* */
-            if self.cadena[self.currentIndex]=="/" and self.cadena[self.currentIndex+1]=="*":
-                self.currentIndex+=2
-                while self.cadena[self.currentIndex]!="*" and self.cadena[self.currentIndex+1]!="/":
+                #ignoramos los comentarios de 2 lineas '//'
+                if self.cadena[self.currentIndex]=="/" and self.cadena[self.currentIndex+1]=="/": 
+                    self.currentIndex+=2
+                    while self.cadena[self.currentIndex] !="\n":
+                        self.currentIndex+=1
                     self.currentIndex+=1
-                self.currentIndex+=2
+                #ignoramos los comentarios de extension /* */
+                if self.cadena[self.currentIndex]=="/" and self.cadena[self.currentIndex+1]=="*":
+                    self.currentIndex+=2
+                    while self.cadena[self.currentIndex]!="*" and self.cadena[self.currentIndex+1]!="/":
+                        self.currentIndex+=1
+                    self.currentIndex+=2
             #si hay mas implementaciones que ignorar, las vamos especificando poco a poco
         except IndexError as e: 
             #si se lanzo la excepcion el index sobrepaso la longitud  de la cadena
