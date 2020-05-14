@@ -22,11 +22,12 @@ if __name__=="__main__":
         table_symbols=read_table("symbols.json")
         data_file=read_file(sys.argv[1])
         tok=Tokenizer(table_symbols)
-        for line in data_file.split("\n"):
-            tok.set_cadena(line)
+        for i,line in enumerate(data_file.split("\n")):
+            tok.set_cadena(i+1,line)
             while tok.hasNextToken():
                 token=tok.nextToken()
                 print("{0: <9} ->{1}".format(token.type,token.value))
     except Exception as e:
         print(e)
+        print("consulte la documentacion 'https://es.cppreference.com/w/' y mejore su sintaxis")
             

@@ -10,10 +10,10 @@ class Tokenizer(object):
     def __init__(self,table):
         self.table=table
 
-    def set_cadena(self,cadena):
+    def set_cadena(self,number,cadena):
         self.cadena=cadena.strip()
         self.currentIndex=0
-
+        self.number=number
     def nextToken(self):
         token=Token()
 
@@ -28,15 +28,15 @@ class Tokenizer(object):
             subtype=self.searchToken(token.value,"PR")
             token.type= subtype if subtype else "ID"
 
-        elif character=="\"":
+        elif character in ["\"","'"]:
             token.value+=character
             self.currentIndex+=1
             character=self.cadena[self.currentIndex]
-            while character != "\"":
+            while character not in ["\"","'"]:
                 token.value+=character
                 self.currentIndex+=1
                 character=self.cadena[self.currentIndex]
-            token.value+="\""
+            token.value+=character
             self.currentIndex+=1
             token.type="CAD"
         elif character.isdigit():
@@ -61,12 +61,29 @@ class Tokenizer(object):
                     self.currentIndex+=1 
                     token.type=subtype
             
-            else:
+            elif character=="#": #si bien las anteriores combinaciones eran validas
+                #ahora reconocemos si se trata de una directiva de procesador(exclusivo de C/C++) como ultima oportunidad
+                token.value+=character
                 self.currentIndex+=1
-                token.type="NN"
-                token.value=character
-                #raise ValueError("Error lexicografico encontrado, no se reconoce {}".format(character))
-    
+                while self.cadena[self.currentIndex]==" ": self.currentIndex+=1
+                if self.cadena[self.currentIndex].isalpha() or self.cadena[self.currentIndex]=="_":
+                    while self.cadena[self.currentIndex].isalpha() or self.cadena[self.currentIndex]=="_":
+                        character=self.cadena[self.currentIndex]
+                        token.value+=character
+                        self.currentIndex+=1
+                        if len(self.cadena)> self.currentIndex: 
+                            character=self.cadena[self.currentIndex] 
+                        else :break
+                    if token.value.lower() in self.table["PR"]["PR_MACRO"]:
+                        token.value=token.value.lower()
+                        token.type="PR_MACRO"
+                    else:
+                        raise Exception("Error linea {0}: No se reconoce '{1}' como directiva de Preprocesador".format(self.number,token.value))
+                else:
+                        raise Exception("Error Lexico linea {0}: Simbolo no reconocido, mejore su sintaxis: {1}".format(self.number,character))
+
+            else:
+                raise Exception("Error Lexico linea {0}: Simbolo no reconocido : '{1}' ".format(self.number,character))
         return token
 
     def searchToken(self,value=str(),type=str()):

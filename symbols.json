@@ -15,8 +15,11 @@
             "unsigned", "union", "enum", "false", "true"
         ],
         "PR_INST": ["return", "break", "case", "continue", "do", "while", "if",
-            "else", "for", "goto", "typedef", "switch", "default", "include"
+            "else", "for", "goto", "typedef", "switch", "default"
         ],
-        "PR_MACRO": ["#", "define", "DEFINE", "__LINE__", "__FILE__"]
+        "PR_MACRO": ["#define", "#include", "#__line__", "#__file__",
+            "#elif", "#if", "#endif", "#error", "#ifdef", "#ifndef",
+            "#message", "#undef"
+        ]
     }
 }
