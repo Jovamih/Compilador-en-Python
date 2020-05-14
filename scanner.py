@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 import sys
 import os,json
-from modula import Tokenizer
+from modula import Tokenizer,Token
 
 def read_file(path=str()):
     with open(path,mode="r") as f:
@@ -22,11 +22,14 @@ if __name__=="__main__":
         table_symbols=read_table("symbols.json")
         data_file=read_file(sys.argv[1])
         tok=Tokenizer(table_symbols)
-        for i,line in enumerate(data_file.split("\n")):
-            tok.set_cadena(i+1,line)
-            while tok.hasNextToken():
-                token=tok.nextToken()
-                print("{0: <9} ->{1}".format(token.type,token.value))
+        tok.set_cadena(data_file)
+        previousToken=Token()
+        newText= data_file
+        variables=dict()
+        while tok.hasNextToken():
+            token=tok.nextToken()
+            print(token)
+        
     except Exception as e:
         print(e)
         print("consulte la documentacion 'https://es.cppreference.com/w/' y mejore su sintaxis")
