@@ -3,16 +3,6 @@ import sys
 import os,json
 from modula import Tokenizer,Token
 
-def clean_file(content=str()):
-    cleanText=list()
-    index=0
-    for line in content.split("\n"):
-        index=line.find("//")
-        if index!=-1:
-            line=line[:index]
-        cleanText.append(line+"\n")
-    return "".join(cleanText)
-
 def read_file(path=str()):
     with open(path,mode="r") as f:
         data=f.read()
@@ -31,12 +21,15 @@ if __name__=="__main__":
     try:
         table_symbols=read_table("symbols.json")
         data_file=read_file(sys.argv[1])
-        data_file=clean_file(data_file)
         tok=Tokenizer(table_symbols)
+        tok.set_cadena(data_file)
         previousToken=Token()
         newText= data_file
         variables=dict()
-        for line in data_file.split("\n"):
+        while tok.hasNextToken():
+            token=tok.nextToken()
+            print(token)
+        """for line in data_file.split("\n"):
             tok.set_cadena(line)
             while tok.hasNextToken(): #mientras hayan token disponibles en esta linea
                 currentToken=tok.nextToken() #obtenenmos el token actual
@@ -63,12 +56,12 @@ if __name__=="__main__":
                     newText=newText.replace(currentToken.value,name)
                                             
                 print("{0: <9} ->{1}".format(currentToken.type,currentToken.value))
-                previousToken=currentToken
+                previousToken=currentToken 
         #guardamos el texto ya procesado
         nameFile=sys.argv[1][sys.argv[1].rfind("\\")+1:] #un poco de codigo para obtener el nombre del archivo obtenido como prametro
         with open(nameFile,"w") as f:
             f.write(newText)
-        print("Archivo Normalizado guardado correctamente")
+        print("Archivo Normalizado guardado correctamente")"""
     except Exception as e:
         print(e)
             

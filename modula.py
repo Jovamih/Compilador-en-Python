@@ -6,17 +6,19 @@ class Token():
         self.type=str()
         self.value=str()
 
+    def __str__(self):
+        return "{0:<9} -> {1}".format(self.type,self.value)
+    
 class Tokenizer(object):
     def __init__(self,table):
         self.table=table
 
     def set_cadena(self,cadena):
-        self.cadena=cadena.strip()
+        self.cadena=cadena
         self.currentIndex=0
 
     def nextToken(self):
         token=Token()
-
         character=self.cadena[self.currentIndex]
         if character.isalpha() :
             while character.isalnum() or character=="_":
@@ -74,13 +76,33 @@ class Tokenizer(object):
             if value in self.table[type][subtype]:
                 return subtype
         return None #si retorna None entonces elemento no existe,pero si lo es, devuelve una tupla con el type,subtype
-
+    def ignore(self):
+        #agregaremos un control de excepciones para evitar el final de la cadena y cause un error grave
+        try:
+        #primero ignoramos los espacios
+            while self.cadena[self.currentIndex]==" ": 
+                    self.currentIndex+=1
+            #ignoramos los comentarios de 2 lineas '//'
+            if self.cadena[self.currentIndex]=="/" and self.cadena[self.currentIndex+1]=="/": 
+                self.currentIndex+=2
+                while self.cadena[self.currentIndex] !="\n":
+                    self.currentIndex+=1
+                self.currentIndex+=1
+            #ignoramos los comentarios de extension /* */
+            if self.cadena[self.currentIndex]=="/" and self.cadena[self.currentIndex+1]=="*":
+                self.currentIndex+=2
+                while self.cadena[self.currentIndex]!="*" and self.cadena[self.currentIndex+1]!="/":
+                    self.currentIndex+=1
+                self.currentIndex+=2
+            #si hay mas implementaciones que ignorar, las vamos especificando poco a poco
+        except IndexError as e: 
+            #si se lanzo la excepcion el index sobrepaso la longitud  de la cadena
+            #lo que significa que se termino de analizar la cadena
+            return False #retornamos False indicando el fin del analisis
+        
+        return True #si la limpieza se ejecuta correctamente, proseguimos con el analisis
     
     def hasNextToken(self):
-        if len(self.cadena)>self.currentIndex:
-            while self.cadena[self.currentIndex]==" ":
-                self.currentIndex+=1
-            if not (self.cadena[self.currentIndex]=="/" and self.cadena[self.currentIndex+1]=="/"):
-                return True  
-        return False
+        return  self.ignore() #si la limpieza fue exitosa significa quee hay mas token
+        #en caso contraio el analisi ha terminado
 
