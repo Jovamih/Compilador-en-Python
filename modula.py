@@ -25,8 +25,9 @@ class Tokenizer(object):
                 if len(self.cadena)> self.currentIndex: 
                     character=self.cadena[self.currentIndex] 
                 else :break
-            
-            token.type="PR" if token.value in self.table["PR"] else "ID"
+            subtype=self.searchToken(token.value,"PR")
+            token.type= subtype if subtype else "ID"
+
         elif character=="\"":
             token.value+=character
             self.currentIndex+=1
@@ -46,22 +47,34 @@ class Tokenizer(object):
                     character=self.cadena[self.currentIndex] 
                 else :break
             token.type="NUM"
-        elif character in self.table["OP"]:
-            token.value+=character
-            self.currentIndex+=1
-            nextChar= self.cadena[self.currentIndex] if len(self.cadena)> self.currentIndex else "0"
-            doubleOperator=character+nextChar
-            if doubleOperator in self.table["OP"]:
-                token.value+=nextChar
-                self.currentIndex+=1 
-            token.type="OP"
         else:
-            self.currentIndex+=1
-            token.type="NN"
-            token.value=character
-            #raise ValueError("Error lexicografico encontrado, no se reconoce {}".format(character))
+            subtype= self.searchToken(character,"OP")
+            if subtype:
+                token.type=subtype
+                token.value+=character
+                self.currentIndex+=1
+                nextChar= self.cadena[self.currentIndex] if len(self.cadena)> self.currentIndex else "0"
+                doubleOperator=character+nextChar
+                subtype= self.searchToken(doubleOperator,"OP")
+                if subtype :
+                    token.value+=nextChar
+                    self.currentIndex+=1 
+                    token.type=subtype
+            
+            else:
+                self.currentIndex+=1
+                token.type="NN"
+                token.value=character
+                #raise ValueError("Error lexicografico encontrado, no se reconoce {}".format(character))
     
         return token
+
+    def searchToken(self,value=str(),type=str()):
+        for subtype in self.table[type]:
+            if value in self.table[type][subtype]:
+                return subtype
+        return None #si retorna None entonces elemento no existe,pero si lo es, devuelve una tupla con el type,subtype
+
 
     def hasNextToken(self):
         if len(self.cadena)>self.currentIndex:

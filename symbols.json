@@ -1,13 +1,21 @@
 {
-    "OP":["(",")","{","}","<",">",">=","<=","==","=","&&",
-         "||","?","!=","!","+","-","++","--","+=","-=",
-         "*=","/=",".",";",",",">>","<<","%"],
+    "OP":{
+          "OP_AGRP":["(",")","{","}","[","]"],    
+          "OP_ASIG":["=","+=","-=","*=","/="],
+          "OP_ARIT":["+","-","*","/","%","++","--"],
+          "OP_RELA":["<",">",">=","<=","==","!="],
+          "OP_LOGC":["&&","!","||"],
+          "OP_BITS":["^","~","|","&","<<",">>"],
+          "OP_DELM":[";",","],
+          "OP":[".","?",":"]
+},
 
-    "PR":["main","int","char","string","define","float",
-          "double","return","bool","if","else","for","while",
-          "cin","cout","iostream","include","using","namespace","std",
-          "fprintf","endl","cstdio","auto","break","case",
-          "continue","default","delete","do","enum","friend","goto",
-          "register","sizeof"
-        ]
+    "PR":{
+         "PR_TYPE":["int","char","string","short","bool","void","float","double","signed",
+                    "unsigned","union","enum","false","true"],
+         "PR_INST":["return","break","case","continue","do","while","if",
+                    "else","for","goto","typedef","switch","default","include"
+          ],
+         "PR_MACRO":["define","DEFINE","__LINE__","__FILE__"]
+    }
 }
