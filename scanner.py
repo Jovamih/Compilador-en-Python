@@ -19,7 +19,6 @@ if __name__=="__main__":
     try:
         table_symbols=read_table("symbols.json")
         data_file=read_file(sys.argv[1])
-        print(data_file)
         tok=Tokenizer(table_symbols)
         for line in data_file.split("\n"):
            # print(line)
