@@ -10,13 +10,12 @@ class Token():
         return "{0:<9} -> {1}".format(self.type,self.value)
     
 class Tokenizer(object):
-    def __init__(self,table):
+    def __init__(self,cadena,table):
         self.table=table
-
-    def set_cadena(self,number,cadena):
-        self.cadena=cadena.strip()
         self.currentIndex=0
-        self.number=number
+        self.currentLine=0
+        self.cadena=cadena
+
     def nextToken(self):
         token=Token()
         character=self.cadena[self.currentIndex]
@@ -80,12 +79,12 @@ class Tokenizer(object):
                         token.value=token.value.lower()
                         token.type="PR_MACRO"
                     else:
-                        raise Exception("Error linea {0}: No se reconoce '{1}' como directiva de Preprocesador".format(self.number,token.value))
+                        raise Exception("Error linea {0}: No se reconoce '{1}' como directiva de Preprocesador".format(self.currentLine,token.value))
                 else:
-                        raise Exception("Error Lexico linea {0}: Simbolo no reconocido, mejore su sintaxis: {1}".format(self.number,character))
+                        raise Exception("Error Lexico linea {0}: Simbolo no reconocido, mejore su sintaxis: {1}".format(self.currentLine,character))
 
             else:
-                raise Exception("Error Lexico linea {0}: Simbolo no reconocido : '{1}' ".format(self.number,character))
+                raise Exception("Error Lexico linea {0}: Simbolo no reconocido : '{1}' ".format(self.currentLine,character))
         return token
 
     def searchToken(self,value=str(),type=str()):
@@ -97,7 +96,9 @@ class Tokenizer(object):
         #agregaremos un control de excepciones para evitar el final de la cadena y cause un error grave
         try:
         #primero ignoramos los espacios
-            while self.cadena[self.currentIndex]==" " or self.cadena[self.currentIndex]=="\n": 
+            while self.cadena[self.currentIndex]==" " or self.cadena[self.currentIndex]=="\n":
+                if self.cadena[self.currentIndex]=="\n":
+                    self.currentLine+=1
                 self.currentIndex+=1
                 #ignoramos los comentarios de 2 lineas '//'
                 if self.cadena[self.currentIndex]=="/" and self.cadena[self.currentIndex+1]=="/": 
@@ -105,11 +106,16 @@ class Tokenizer(object):
                     while self.cadena[self.currentIndex] !="\n":
                         self.currentIndex+=1
                     self.currentIndex+=1
+                    self.currentLine+=1
                 #ignoramos los comentarios de extension /* */
                 if self.cadena[self.currentIndex]=="/" and self.cadena[self.currentIndex+1]=="*":
                     self.currentIndex+=2
+                   
                     while self.cadena[self.currentIndex]!="*" and self.cadena[self.currentIndex+1]!="/":
                         self.currentIndex+=1
+                        if self.cadena[self.currentIndex] =="\n":
+                            self.currentLine+=1
+                        
                     self.currentIndex+=2
             #si hay mas implementaciones que ignorar, las vamos especificando poco a poco
         except IndexError as e: 

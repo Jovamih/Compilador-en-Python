@@ -19,13 +19,10 @@ if __name__=="__main__":
         print("Ingrese un archivo C como parametro para el analizador Lexico")
         exit(0)
     try:
-        table_symbols=read_table("symbols.json")
-        data_file=read_file(sys.argv[1])
-        tok=Tokenizer(table_symbols)
-        tok.set_cadena(data_file)
-        previousToken=Token()
-        newText= data_file
-        variables=dict()
+        tabla=read_table("symbols.json")
+        datos=read_file(sys.argv[1])
+        tok=Tokenizer(datos,tabla)
+
         while tok.hasNextToken():
             token=tok.nextToken()
             print(token)
