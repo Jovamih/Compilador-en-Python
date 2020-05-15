@@ -1,23 +1,25 @@
 #! /usr/bin/env python3
 """Modulo de python encargado de brindar soporte interno a el procesamiento de Tokens"""
-variables=dict()
-
-""" Funcion para guardar las variables por su Tipo (aplicable para todas)"""
-def saveVariable(type=str(),value=str()):
-    if type not in variables.keys():
-        variables[type]=list()
-    if value not in variables[type]:
-        variables[type].append(value)
-
-"""Funcion para obtener el nombre normalizado de una variable. ejemp(a -> f001)"""
-def getNameVariable(value=str()):
-    name=str()
-    for key in variables.keys():
-        if value in variables[key]:
-            name=key[0]+str(variables[key].index(value)+1).zfill(3)
-            return name
-    return value
- 
+class Util(object):
+    variables=dict()
+    """ Funcion para guardar las variables por su Tipo (aplicable para todas)"""
+    @staticmethod
+    def saveVariable(type=str(),value=str()):
+        if type not in Util.variables.keys():
+            Util.variables[type]=list()
+        if value not in Util.variables[type]:
+            Util.variables[type].append(value)
+    
+    """Funcion para obtener el nombre normalizado de una variable. ejemp(a -> f001)"""
+    @staticmethod   
+    def getNameVariable(value=str()):
+        name=str()
+        for key in Util.variables.keys():
+            if value in Util.variables[key]:
+                name=key[0]+str(Util.variables[key].index(value)+1).zfill(3)
+                return name
+        return value
+    
 """ Clase Token que maneja el 'tipo' y 'valor' """
 class Token():
     def __init__(self):
@@ -56,7 +58,7 @@ class Tokenizer(object):
                 token.type="ID"
                 if self.prevToken.type=="PR_TYPE":
                     token.type="ID"
-                    saveVariable(self.prevToken.value,token.value)
+                    Util.saveVariable(self.prevToken.value,token.value)
                 
         elif character in ["\"","'"]:
             token.value+=character
@@ -116,11 +118,7 @@ class Tokenizer(object):
                 raise Exception("Error Lexico linea {0}: Simbolo no reconocido : '{1}' ".format(self.currentLine,character))
         
         if token.type=="ID":
-            if token.value=="iostream":
-                print("iostream estuvo aqui")
-            name=getNameVariable(token.value)
-            if name=="iostream":
-                print("iostrea, logro pasar")
+            name=Util.getNameVariable(token.value)
             self.ncad+= name
         else: self.ncad+=token.value
         self.prevToken=token
