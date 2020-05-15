@@ -1,6 +1,24 @@
 #! /usr/bin/env python3
 """Modulo de python encargado de brindar soporte interno a el procesamiento de Tokens"""
+variables=dict()
 
+""" Funcion para guardar las variables por su Tipo (aplicable para todas)"""
+def saveVariable(type=str(),value=str()):
+    if type not in variables.keys():
+        variables[type]=list()
+    if value not in variables[type]:
+        variables[type].append(value)
+
+"""Funcion para obtener el nombre normalizado de una variable. ejemp(a -> f001)"""
+def getNameVariable(value=str()):
+    name=str()
+    for key in variables.keys():
+        if value in variables[key]:
+            name=key[0]+str(variables[key].index(value)+1).zfill(3)
+            return name
+    return value
+ 
+""" Clase Token que maneja el 'tipo' y 'valor' """
 class Token():
     def __init__(self):
         self.type=str()
@@ -9,12 +27,17 @@ class Token():
     def __str__(self):
         return "{0:<9} -> {1}".format(self.type,self.value)
     
+""" La clase madre del modulo que maneja las propiedades
+    principales para el manejo de la cadena de Tokens
+"""    
 class Tokenizer(object):
     def __init__(self,cadena,table):
         self.table=table
         self.currentIndex=0
         self.currentLine=0
         self.cadena=cadena
+        self.ncad=""
+        self.prevToken=Token()
 
     def nextToken(self):
         token=Token()
@@ -27,8 +50,14 @@ class Tokenizer(object):
                     character=self.cadena[self.currentIndex] 
                 else :break
             subtype=self.searchToken(token.value,"PR")
-            token.type= subtype if subtype else "ID"
-
+            if subtype:
+                token.type=subtype
+            else:
+                token.type="ID"
+                if self.prevToken.type=="PR_TYPE":
+                    token.type="ID"
+                    saveVariable(self.prevToken.value,token.value)
+                
         elif character in ["\"","'"]:
             token.value+=character
             self.currentIndex+=1
@@ -85,6 +114,16 @@ class Tokenizer(object):
 
             else:
                 raise Exception("Error Lexico linea {0}: Simbolo no reconocido : '{1}' ".format(self.currentLine,character))
+        
+        if token.type=="ID":
+            if token.value=="iostream":
+                print("iostream estuvo aqui")
+            name=getNameVariable(token.value)
+            if name=="iostream":
+                print("iostrea, logro pasar")
+            self.ncad+= name
+        else: self.ncad+=token.value
+        self.prevToken=token
         return token
 
     def searchToken(self,value=str(),type=str()):
@@ -97,14 +136,16 @@ class Tokenizer(object):
         try:
         #primero ignoramos los espacios
             while self.cadena[self.currentIndex]==" " or self.cadena[self.currentIndex]=="\n":
+                self.ncad+=self.cadena[self.currentIndex]
                 if self.cadena[self.currentIndex]=="\n":
                     self.currentLine+=1
                 self.currentIndex+=1
                 #ignoramos los comentarios de 2 lineas '//'
-                if self.cadena[self.currentIndex]=="/" and self.cadena[self.currentIndex+1]=="/": 
+                if self.cadena[self.currentIndex]=="/" and self.cadena[self.currentIndex+1]=="/":
                     self.currentIndex+=2
                     while self.cadena[self.currentIndex] !="\n":
                         self.currentIndex+=1
+                    self.ncad+=self.cadena[self.currentIndex]
                     self.currentIndex+=1
                     self.currentLine+=1
                 #ignoramos los comentarios de extension /* */

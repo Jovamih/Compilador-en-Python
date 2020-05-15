@@ -12,10 +12,10 @@
 
     "PR": {
         "PR_TYPE": ["int", "char", "string", "short", "bool", "void", "float", "double", "signed",
-            "unsigned", "union", "enum", "false", "true"
+            "unsigned", "union", "enum", "false", "true", "FILE", "fstream"
         ],
         "PR_INST": ["return", "break", "case", "continue", "do", "while", "if",
-            "else", "for", "goto", "typedef", "switch", "default"
+            "else", "for", "goto", "typedef", "switch", "default", "main"
         ],
         "PR_MACRO": ["#define", "#include", "#__line__", "#__file__",
             "#elif", "#if", "#endif", "#error", "#ifdef", "#ifndef",
