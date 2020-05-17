@@ -148,7 +148,7 @@ class Tokenizer(object):
             if token.type=="PR_TYPE":
                 self.hasVariable=True
                 self.lastType=token.value
-            elif token.type not in ("CAD","NUM") and token.value not in ",=" and self.hasVariable:
+            elif token.type not in ("CAD","NUM") and token.value not in ",=[]" and self.hasVariable:
                 self.hasVariable=False   
             self.ncad+=token.value
             
