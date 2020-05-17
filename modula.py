@@ -2,6 +2,7 @@
 """Modulo de python encargado de brindar soporte interno a el procesamiento de Tokens"""
 class Util(object):
     variables=dict()
+    macros=dict()
     """ Funcion para guardar las variables por su Tipo (aplicable para todas)"""
     @staticmethod
     def saveVariable(type=str(),value=str()):
@@ -34,33 +35,32 @@ class Token():
 """    
 class Tokenizer(object):
     def __init__(self,cadena,table):
-        self.table=table
-        self.currentIndex=0
-        self.currentLine=0
-        self.cadena=cadena
-        self.ncad=""
-        self.prevToken=Token()
-
+        self.table=table #la tabla de simbolos completa
+        self.currentIndex=0 #el indice actual
+        self.currentLine=0 #nos devuelve la linea actual del scanner
+        self.cadena=cadena  #contiene la cadena a Analizar
+        self.ncad=str() #es la nueva cadena ya Normalizada
+        self.hasVariable=False # para saber si hay uno o mas variables luego de una PR de tipo
+        self.hasMacro=False #para saber si hay macros
+        self.lastType="" #sirve para identificar cual es la ultima PR de tipo registrada
+        self.lastMacro=""
     def nextToken(self):
         token=Token()
         character=self.cadena[self.currentIndex]
-        if character.isalpha() :
-            while character.isalnum() or character=="_":
+        if character.isalpha() : #verifica si es un ID o PR
+            while character.isalnum() or character=="_": #esto es imporartente ya que una varaible en C puede tener guion bajo
                 token.value+=character
                 self.currentIndex+=1
                 if len(self.cadena)> self.currentIndex: 
                     character=self.cadena[self.currentIndex] 
                 else :break
-            subtype=self.searchToken(token.value,"PR")
+            subtype=self.searchToken(token.value,"PR") #verificamos si es una palabra reservada PR
             if subtype:
                 token.type=subtype
-            else:
+            else:   #en caso contrario es un ID
                 token.type="ID"
-                if self.prevToken.type=="PR_TYPE":
-                    token.type="ID"
-                    Util.saveVariable(self.prevToken.value,token.value)
                 
-        elif character in ["\"","'"]:
+        elif character in ["\"","'"]: #verifica si se trata de una cadena
             token.value+=character
             self.currentIndex+=1
             character=self.cadena[self.currentIndex]
@@ -71,7 +71,7 @@ class Tokenizer(object):
             token.value+=character
             self.currentIndex+=1
             token.type="CAD"
-        elif character.isdigit():
+        elif character.isdigit(): #verifica si se trata de un numero
             while character.isdigit():
                 token.value+=character
                 self.currentIndex+=1
@@ -80,7 +80,7 @@ class Tokenizer(object):
                 else :break
             token.type="NUM"
         else:
-            subtype= self.searchToken(character,"OP")
+            subtype= self.searchToken(character,"OP") #si se trata de un Operador
             if subtype:
                 token.type=subtype
                 token.value+=character
@@ -92,7 +92,7 @@ class Tokenizer(object):
                     token.value+=nextChar
                     self.currentIndex+=1 
                     token.type=subtype
-            
+            #especial en C/C++
             elif character=="#": #si bien las anteriores combinaciones eran validas
                 #ahora reconocemos si se trata de una directiva de procesador(exclusivo de C/C++) como ultima oportunidad
                 token.value+=character
@@ -117,11 +117,8 @@ class Tokenizer(object):
             else:
                 raise Exception("Error Lexico linea {0}: Simbolo no reconocido : '{1}' ".format(self.currentLine,character))
         
-        if token.type=="ID":
-            name=Util.getNameVariable(token.value)
-            self.ncad+= name
-        else: self.ncad+=token.value
-        self.prevToken=token
+        self.normalize(token)
+        
         return token
 
     def searchToken(self,value=str(),type=str()):
@@ -129,6 +126,32 @@ class Tokenizer(object):
             if value in self.table[type][subtype]:
                 return subtype
         return None #si retorna None entonces elemento no existe,pero si lo es, devuelve una tupla con el type,subtype
+    def normalize(self,token):
+        #para la normalizacion de Variables
+        """
+        if self.hasMacro:
+            if token.type=="ID":
+                Util.macros[token.value]=Util.macros.get(token.value,"")
+                self.lastMacro=token.value
+            else:
+                Util.macros[self.lastMacro]+=token.value
+            self.ncad+=token.value
+            """
+        if token.type=="ID": #si es identificador
+            if self.hasVariable: #y se ha declarado como variable
+                Util.saveVariable(self.lastType,token.value) #guardamos dicha variable
+            name=Util.getNameVariable(token.value) #obtenemos el nombre del ID normalizado
+            self.ncad+=name
+        else:
+            if token.type=="PR_MACRO":
+                self.hasMacro=True
+            if token.type=="PR_TYPE":
+                self.hasVariable=True
+                self.lastType=token.value
+            elif token.type not in ("CAD","NUM") and token.value not in ",=" and self.hasVariable:
+                self.hasVariable=False   
+            self.ncad+=token.value
+            
     def ignore(self):
         #agregaremos un control de excepciones para evitar el final de la cadena y cause un error grave
         try:
