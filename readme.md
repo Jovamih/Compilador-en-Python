@@ -6,7 +6,7 @@ _Submodulo perteneciente al proyecto del curso de Lenguajes y compiladores UNMSM
     _Antes_
     [sumador.c capture](Images/capture_sum.jpg) 
     _Despues_
-    [scaneado.c capture](Images(capture_scan.jpg))
+    [scaneado.c capture](Images/capture_scan.jpg)
 
 ## Comenzando 🎉
 
